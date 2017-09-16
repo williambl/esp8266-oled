@@ -1,3 +1,4 @@
+#include <ESP8266WiFi.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -13,18 +14,37 @@
 Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 int counter = 0;
 
+const char* ssid     = "";
+const char* password = "";
+
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC);
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
+
+  display.print("Connecting to ");
+  display.println(ssid);
+  display.display();
+  
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    display.print(".");
+    display.display();
+  }
+ 
+  display.println("");
+  display.println("WiFi connected");  
+  display.println("IP address: ");
+  display.println(WiFi.localIP());
+  display.print("Netmask: ");
+  display.println(WiFi.subnetMask());
+  display.print("Gateway: ");
+  display.println(WiFi.gatewayIP());
+  display.display();
 }
 
 void loop() {
-  display.setCursor(0,0);
-  display.setTextColor(BLACK, WHITE); // 'inverted' text
-  display.setTextSize(2);
-  display.println(counter);
-  display.display();
-  counter++;
 }
