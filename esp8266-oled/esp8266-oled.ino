@@ -1,4 +1,6 @@
 #include <ESP8266WiFi.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -17,6 +19,9 @@ int counter = 0;
 const char* ssid     = "";
 const char* password = "";
 
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP);
+
 void setup() {
   display.begin(SSD1306_SWITCHCAPVCC);
   display.clearDisplay();
@@ -26,25 +31,32 @@ void setup() {
   display.print("Connecting to ");
   display.println(ssid);
   display.display();
-  
+
   WiFi.begin(ssid, password);
-  
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     display.print(".");
     display.display();
   }
- 
-  display.println("");
-  display.println("WiFi connected");  
-  display.println("IP address: ");
-  display.println(WiFi.localIP());
-  display.print("Netmask: ");
-  display.println(WiFi.subnetMask());
-  display.print("Gateway: ");
-  display.println(WiFi.gatewayIP());
+
+  display.clearDisplay();
   display.display();
+
+  timeClient.begin();
 }
 
 void loop() {
+  timeClient.update();
+  
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.setTextColor(BLACK, WHITE);
+  display.setTextSize(2);
+  display.println(timeClient.getFormattedTime());
+  display.setTextColor(WHITE, BLACK);
+  display.setTextSize(1);
+  display.println("");
+  display.println("IP address: ");
+  display.println(WiFi.localIP());
+  display.display();
 }
