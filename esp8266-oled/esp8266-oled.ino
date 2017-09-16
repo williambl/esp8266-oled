@@ -99,9 +99,20 @@ void get_weather () {
   
   if(httpCode > 0) {
     weather = http.getString();
+    weather = parse_weather_string(weather);
     Serial.println(weather);
   }
 
   http.end();
 }
 
+String parse_weather_string(String input_str) {
+    input_str.replace("―", "-");
+    input_str.replace("°", "");
+    input_str.replace("↘", "");
+    input_str.replace("↗", "");
+    input_str.replace("↖", "");
+    input_str.replace("↙", "");
+    input_str.replace("’", "'");
+    return input_str;
+}
