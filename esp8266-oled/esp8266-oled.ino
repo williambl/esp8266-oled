@@ -6,7 +6,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Fonts/TomThumb.h>
+#include <Fonts/Org_01.h>
 
 // If using software SPI (the default case):
 #define OLED_MOSI   D7 //Connect to D1 on OLED
@@ -29,7 +29,7 @@ String weather = String();
 void setup() {
   Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC);
-  display.setFont(&TomThumb);
+  display.setFont(&Org_01);
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
@@ -71,7 +71,7 @@ void loop() {
       display.setTextColor(BLACK, WHITE);
       display.setTextSize(2);
       display.println(timeClient.getFormattedTime());
-      display.setFont(&TomThumb);
+      display.setFont(&Org_01);
       display.setTextColor(WHITE, BLACK);
       display.setTextSize(1);
       display.println("");
@@ -84,7 +84,6 @@ void loop() {
       display.setCursor(0,10);
       display.setTextSize(1);
       display.print(weather);
-      Serial.println(weather);
       display.display();
       break;
   }
@@ -105,3 +104,4 @@ void get_weather () {
 
   http.end();
 }
+
