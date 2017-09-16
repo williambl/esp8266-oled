@@ -12,9 +12,10 @@
 #define OLED_DC     D1 //Connect to DC on OLED
 #define OLED_CS     D8 //Connect to CS on OLED
 #define OLED_RESET  D3 //Connect to RES on OLED
+#define MODE_SWITCH D0 //Button to change mode
 
 Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
-int counter = 0;
+int mode = 0;
 
 const char* ssid     = "";
 const char* password = "";
@@ -46,17 +47,36 @@ void setup() {
 }
 
 void loop() {
-  timeClient.update();
-  
-  display.clearDisplay();
-  display.setCursor(0,0);
-  display.setTextColor(BLACK, WHITE);
-  display.setTextSize(2);
-  display.println(timeClient.getFormattedTime());
-  display.setTextColor(WHITE, BLACK);
-  display.setTextSize(1);
-  display.println("");
-  display.println("IP address: ");
-  display.println(WiFi.localIP());
-  display.display();
+  int buttonState = digitalRead(MODE_SWITCH);
+  if (buttonState == HIGH) {
+    if (mode == 0) {
+      mode = 1;
+    } else if (mode == 1) {
+      mode = 0;
+    }
+    delay(200);
+  }
+  switch (mode) {
+    case 0:
+      timeClient.update(); 
+      display.clearDisplay();
+      display.setCursor(0,0);
+      display.setTextColor(BLACK, WHITE);
+      display.setTextSize(2);
+      display.println(timeClient.getFormattedTime());
+      display.setTextColor(WHITE, BLACK);
+      display.setTextSize(1);
+      display.println("");
+      display.println("IP address: ");
+      display.println(WiFi.localIP());
+      display.display();
+      break;
+    case 1:
+      display.clearDisplay();
+      display.setCursor(0,0);
+      display.print("Mode 1");
+      display.display();
+      break;
+  }
+
 }
