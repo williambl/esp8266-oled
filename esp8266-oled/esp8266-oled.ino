@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
+#include <ESP8266HTTPClient.h>
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -22,8 +23,10 @@ const char* password = "";
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP);
+String weather = String();
 
 void setup() {
+  Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC);
   display.clearDisplay();
   display.setTextSize(1);
@@ -50,6 +53,7 @@ void loop() {
   int buttonState = digitalRead(MODE_SWITCH);
   if (buttonState == HIGH) {
     if (mode == 0) {
+      get_weather();
       mode = 1;
     } else if (mode == 1) {
       mode = 0;
@@ -74,9 +78,25 @@ void loop() {
     case 1:
       display.clearDisplay();
       display.setCursor(0,0);
-      display.print("Mode 1");
+      display.print(weather);
+      Serial.println(weather);
       display.display();
       break;
   }
 
+}
+
+void get_weather () {
+  HTTPClient http;
+  http.setUserAgent("ESP8266 (like curl/7.43.0)");
+  http.begin("http://wttr.in/London?0TQM");
+  int httpCode = http.GET();
+  Serial.println(httpCode);
+  
+  if(httpCode > 0) {
+    weather = http.getString();
+    Serial.println(weather);
+  }
+
+  http.end();
 }
