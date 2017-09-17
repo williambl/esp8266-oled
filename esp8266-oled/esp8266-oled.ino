@@ -6,7 +6,7 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <Fonts/Org_01.h>
+#include <Fonts/RobotoMono4pt.h>
 
 // If using software SPI (the default case):
 #define OLED_MOSI   D7 //Connect to D1 on OLED
@@ -29,7 +29,7 @@ String weather = String();
 void setup() {
   Serial.begin(9600);
   display.begin(SSD1306_SWITCHCAPVCC);
-  display.setFont(&Org_01);
+  display.setFont(&RobotoMono4pt);
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
@@ -71,7 +71,7 @@ void loop() {
       display.setTextColor(BLACK, WHITE);
       display.setTextSize(2);
       display.println(timeClient.getFormattedTime());
-      display.setFont(&Org_01);
+      display.setFont(&RobotoMono4pt);
       display.setTextColor(WHITE, BLACK);
       display.setTextSize(1);
       display.println("");
@@ -80,11 +80,6 @@ void loop() {
       display.display();
       break;
     case 1:
-      display.clearDisplay();
-      display.setCursor(0,10);
-      display.setTextSize(1);
-      display.print(weather);
-      display.display();
       break;
   }
 
@@ -104,6 +99,12 @@ void get_weather () {
   }
 
   http.end();
+  display.clearDisplay();
+  display.setCursor(0,10);
+  display.setTextSize(1);
+  display.print(weather);
+  display.display();
+  display.startscrollleft(0x00, 0x0F);
 }
 
 String parse_weather_string(String input_str) {
@@ -114,5 +115,22 @@ String parse_weather_string(String input_str) {
     input_str.replace("↖", "");
     input_str.replace("↙", "");
     input_str.replace("’", "'");
+    while (true) {
+      if (input_str.indexOf(" \n") < 1) {
+        break;
+      }
+      input_str.replace(" \n", "\n");
+    }
+    /*
+    int sos = 0;
+    String inputtmp = String();
+    for (int i = 0; i < 5; i++) {
+      Serial.println(sos);
+      Serial.println(inputtmp);
+      inputtmp += input_str.substring(sos, sos+15);
+      sos = input_str.indexOf("\n", sos+16);
+    }
+    */
+    
     return input_str;
 }
