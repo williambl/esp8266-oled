@@ -70,6 +70,7 @@ void loop() {
       display.setFont(NULL);
       display.setTextColor(BLACK, WHITE);
       display.setTextSize(2);
+      display.setTextWrap(true);
       display.println(timeClient.getFormattedTime());
       display.setFont(&RobotoMono4pt);
       display.setTextColor(WHITE, BLACK);
@@ -102,6 +103,7 @@ void get_weather () {
   display.clearDisplay();
   display.setCursor(0,10);
   display.setTextSize(1);
+  display.setTextWrap(false);
   display.print(weather);
   display.display();
   display.startscrollleft(0x00, 0x0F);
